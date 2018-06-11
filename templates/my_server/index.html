@@ -1,14 +1,12 @@
 {% extends 'my_server/base.html' %}
-{% load crispy_forms_tags %}
 {% block main %}
-    {% crispy form %}
     <table class="table table-hover" style="margin-top:10px;">
         <tr id="server-list">
             <th>服务器地址</th>
             <th>游戏名</th>
             <th>游戏区服</th>
+            <th>游戏版本号</th>
             <th>服务器当前时间</th>
-            <th>最近修改服务器</th>
             <th>服务器操作</th>
         </tr>
         {% for server in server_list %}
@@ -16,66 +14,17 @@
                 <td>{{ server.ip_address }}</td>
                 <td>{{ server.game }}</td>
                 <td>{{ server.area }}</td>
-                <td>未获取，点击更新获取</td>
-                <td>{{ server.last_update }}</td>
+                <td>{{ server.version }}</td>
+                <td>未获取，点击更新时间</td>
                 <td id="{{ server.id }}">
-                    <button class="btn btn-success get-time">更新</button>
-                    <button class="btn btn-primary edit-server" data-toggle="modal" data-target="#Modal-edit">编辑</button>
-                    <button class="btn btn-danger delete-server" data-toggle="modal" data-target="#Modal-delete">删除</button>
+                    <form action="{% url 'set_server_time' %}" class="form-inline" style="display: inline;">
+                        <input size="16" type="text" value="" class="form_datetime form-control" name="time">
+                        <button class="btn btn-primary set-time" type="submit">设置时间</button>
+                    </form>
+                    <button class="btn btn-success get-time" style="margin-right: 10px">更新时间</button>
                 </td>
             </tr>
-
         {% endfor %}
-     <!-- 编辑弹窗 -->
-        <div class="modal fade" id="Modal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                            &times;
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">
-                            编辑服务器
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary confirm-edit" data-dismiss="modal">
-                            确定
-                        </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消
-                        </button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal -->
-        </div>
-        <!-- 确认删除弹窗 -->
-        <div class="modal fade" id="Modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                            &times;
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">
-                            提示信息
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <h3>确定删除该服务器吗？</h3>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary confirm-delete" data-dismiss="modal">
-                            确定
-                        </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消
-                        </button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal -->
-        </div>
     </table>
     <script>
         $(function(){
@@ -87,57 +36,45 @@
                     url: {% url 'get_server_time' %},
                     data: {'id': id},
                     success: function(ret) {
-                        $('#' + id).prev().prev().text(ret);
+                        $('#' + id).prev().text(ret);
                     },
                     error: function() {
                         alert('更新服务器时间失败');
                     }
                 });
             });
-            // 新增服务器
-            $('#add-server-form').submit(function(e){
+            $('.set-time').click(function(e){
                 e.preventDefault();
+                let id = $(this).parent().parent().attr('id');
+                let form = $(this).parent();
+                let data = $.param({'id': id}) + '&' + form.serialize();
                 $.ajax({
-                    type: $(this).attr('method'),
-                    url: $(this).attr('action'),
-                    data: $('#add-server-form').serialize(),
+                    type: 'POST',
+                    url: {% url 'set_server_time' %},
+                    data: data,
                     success: function(ret) {
-                        $('#add-server-form')[0].reset();
-                        $('#server-list').after(ret);
+                        $('#' + id).prev().text(ret);
+                        form[0].reset();
                     },
                     error: function() {
-                        alert('添加服务器失败');
+                        alert('设置服务器时间失败');
                     }
                 });
             });
-            // 弹出删除确认，选定删除目标
-            $(document).delegate('.delete-server', 'click', function(){
-                let server = $(this).parent().parent();
-                let id = $(this).parent().attr('id');
-                // 点击确认删除按钮，进行删除操作
-                $('.confirm-delete').click(function(){
-                    $.ajax({
-                        type: 'POST',
-                        url: {% url 'delete_server' %},
-                        data: {'id': id},
-                        success: function() {
-                            // 淡出被删除的服务器信息
-                            server.fadeOut();
-                        },
-                        error: function() {
-                            alert('删除服务器失败');
-                        }
-                    });
-                });
+            // 定义时间选择器格式
+            $(".form_datetime").datetimepicker({
+                format: 'yyyy-mm-dd hh:ii:ss',
+                language:"zh-CN",
+                autoclose: true,
             });
-            // 弹出编辑，选定编辑目标
-            $(document).delegate('.edit-server', 'click', function(){
+            /*
+            $(document).delegate('.set', 'click', function(){
                 $('#Modal-edit').find('.modal-body').html('');
                 let server = $(this).parent().parent();
                let id = $(this).parent().attr('id');
                $.ajax({
                   type: 'GET',
-                   url: {% url 'edit_server' %},
+                   url: % url 'edit_server' %},
                    data: {'id': id},
                    success: function(ret) {
                        $('#Modal-edit').find('.modal-body').append(ret);
@@ -152,7 +89,7 @@
                    let data = $.param({'id': id}) + '&' + $('#edit-server-form').serialize();
                    $.ajax({
                        type: 'POST',
-                       url: {% url 'edit_server' %},
+                       url: % url 'edit_server' %},
                        data: data,
                        success: function(ret) {
                            // 显示编辑后的服务器信息
@@ -164,6 +101,7 @@
                    })
                });
             });
+            */
         });
     </script>
 {% endblock %}

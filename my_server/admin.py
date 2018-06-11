@@ -4,6 +4,6 @@ from .models import Server
 
 
 class ServerAdmin(admin.ModelAdmin):
-    list_display = ('ip_address', 'game', 'area')
+    list_display = ('ip_address', 'game', 'area', 'version')
 
 admin.site.register(Server, ServerAdmin)
