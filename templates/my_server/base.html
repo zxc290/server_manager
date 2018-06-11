@@ -1,0 +1,24 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>服务器管理系统</title>
+    <!--css-->
+    <link rel="stylesheet" href="{% static 'my_server/css/bootstrap.min.css' %}">
+    <!--js-->
+    <script src="{% static 'my_server/js/jquery-2.1.3.min.js' %}"></script>
+    <script src="{% static 'my_server/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row col-md-12">
+        {% include 'my_server/navbar.html' %} <!--导航栏-->
+    </div>
+    <div class="row col-md-12" id="main"> <!--主内容-->
+        {% block main %}
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>
