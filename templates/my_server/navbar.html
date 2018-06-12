@@ -10,5 +10,13 @@
             </button>
             <a class="navbar-brand" href="{% url 'index' %}">服务器管理系统</a>
         </div>
+        <div id="navbar" class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><a class="navbar-link" href="{% url 'logout' %}">退出</a></li>
+                {% endif %}
+            </ul>
+        </div><!--/.nav-collapse -->
     </div><!-- /.container-fluid -->
 </nav>

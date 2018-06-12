@@ -1,5 +1,6 @@
 {% extends 'my_server/base.html' %}
 {% block main %}
+    <h3>当前用户：{{ user.username }}</h3>
     <table class="table table-hover" style="margin-top:10px;">
         <tr id="server-list">
             <th>服务器地址</th>
@@ -67,41 +68,6 @@
                 language:"zh-CN",
                 autoclose: true,
             });
-            /*
-            $(document).delegate('.set', 'click', function(){
-                $('#Modal-edit').find('.modal-body').html('');
-                let server = $(this).parent().parent();
-               let id = $(this).parent().attr('id');
-               $.ajax({
-                  type: 'GET',
-                   url: % url 'edit_server' %},
-                   data: {'id': id},
-                   success: function(ret) {
-                       $('#Modal-edit').find('.modal-body').append(ret);
-                   },
-                   error: function(){
-                       alert('获取服务器信息失败');
-                   }
-               });
-               // 点击确认编辑，进行编辑操作
-               $('.confirm-edit').click(function(){
-                   // 合并id到表单序列化数据
-                   let data = $.param({'id': id}) + '&' + $('#edit-server-form').serialize();
-                   $.ajax({
-                       type: 'POST',
-                       url: % url 'edit_server' %},
-                       data: data,
-                       success: function(ret) {
-                           // 显示编辑后的服务器信息
-                           server.html(ret)
-                       },
-                       error: function() {
-                           alert('编辑服务器失败');
-                       }
-                   })
-               });
-            });
-            */
         });
     </script>
 {% endblock %}

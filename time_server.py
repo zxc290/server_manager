@@ -3,31 +3,21 @@
 import socket
 import threading
 import sys
-import requests
 import win32api
-from bs4 import BeautifulSoup
+import win32timezone
 from datetime import datetime, timedelta
 
-# 正式使用时修改socket的ip获取
-
-
-def get_out_ip(url=r'http://www.ip138.com/'):
-    r1 = requests.get(url)
-    txt = r1.text
-    soup = BeautifulSoup(txt, "html.parser").iframe
-
-    r2 = requests.get(soup["src"])
-    txt = r2.text
-    ip = txt[txt.find("[") + 1: txt.find("]")]
-
-    return ip
 
 def socket_service():
+    # 获取本机电脑名
+    myname = socket.getfqdn(socket.gethostname())
+    # 获取本机ip
+    ip = socket.gethostbyname(myname)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # 防止socket server重启后端口被占用（socket.error: [Errno 98] Address already in use）
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(('127.0.0.1', 20000))
+        s.bind((ip, 20000))
         s.listen(10)
     except socket.error as msg:
         print(msg)
@@ -41,10 +31,8 @@ def socket_service():
 
 def deal_data(conn, addr):
     print('已与 {0} 建立连接'.format(addr))
-
     data = conn.recv(1024)
     print('客户端 {0} 发送的数据是 {1}'.format(addr, data))
-
     if data == b'get_time':
         # 获取服务器本地时间
         localtime = win32api.GetLocalTime()  # tuple

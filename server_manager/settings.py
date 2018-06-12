@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'my_server',
     'crispy_forms',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -148,4 +149,12 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static')]
 
+# 声明新的用户模型
+AUTH_USER_MODEL = 'users.User'
+
+# crispy_forms默认样式
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# 登录与登出重定向
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'

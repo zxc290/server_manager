@@ -2,15 +2,18 @@ import socket
 import sys
 from django.shortcuts import render
 from django.http.response import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Server
 # Create your views here.
 
 
+@login_required
 def index(request):
-    server_list = Server.objects.all()
-    return render(request, 'my_server/index.html', {'server_list': server_list})
+    user = request.user
+    server_list = Server.objects.filter(server_owner=user)
+    return render(request, 'my_server/index.html', {'user': user, 'server_list': server_list})
 
 
 @csrf_exempt
@@ -29,6 +32,7 @@ def get_server_time(request):
     print('服务器当前时间是: {}, 关闭连接...'.format(ctime))
     s.close()
     return HttpResponse(ctime)
+
 
 @csrf_exempt
 @require_POST
