@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 
 # Create your models here.
@@ -8,6 +9,7 @@ class Server(models.Model):
     area = models.CharField(max_length=30, verbose_name='游戏区服')
     version = models.CharField(default='v1.0', max_length=30, verbose_name='游戏版本')
     last_update = models.DateTimeField(auto_now=True, verbose_name='最近编辑时间')
+    users = models.ManyToManyField(User, blank=True, verbose_name='服务器管理员')
 
     class Meta:
         ordering = ['last_update']

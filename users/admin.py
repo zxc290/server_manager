@@ -4,8 +4,8 @@ from .models import User
 # Register your models here.
 
 
-class MyUserAdmin(admin.ModelAdmin):
-    filter_horizontal = ('servers',)
+class MyUserAdmin(UserAdmin):
+    pass
 
 
 admin.site.register(User, MyUserAdmin)

@@ -12,7 +12,7 @@ from .models import Server
 @login_required
 def index(request):
     user = request.user
-    server_list = Server.objects.filter(server_owner=user)
+    server_list = user.server_set.all()
     return render(request, 'my_server/index.html', {'user': user, 'server_list': server_list})
 
 
@@ -23,7 +23,7 @@ def get_server_time(request):
     server = Server.objects.get(id=id)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((server.ip_address, 20000))
+        s.connect((server.ip_address, 10200))
     except socket.error as e:
         print(e)
         sys.exit(1)
@@ -42,7 +42,7 @@ def set_server_time(request):
     server = Server.objects.get(id=id)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((server.ip_address, 20000))
+        s.connect((server.ip_address, 10200))
     except socket.error as e:
         print(e)
         sys.exit(1)

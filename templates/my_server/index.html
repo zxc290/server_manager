@@ -19,6 +19,7 @@
                 <td>未获取，点击更新时间</td>
                 <td id="{{ server.id }}">
                     <form action="{% url 'set_server_time' %}" class="form-inline" style="display: inline;">
+                        {% csrf_token %}
                         <input size="16" type="text" value="" class="form_datetime form-control" name="time">
                         <button class="btn btn-primary set-time" type="submit">设置时间</button>
                     </form>
