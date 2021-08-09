@@ -8,6 +8,6 @@ idna==2.6
 pyodbc==4.0.23
 pypiwin32==223
 pytz==2018.4
-pywin32==223
+pywin32==301
 requests==2.18.4
 urllib3==1.22
